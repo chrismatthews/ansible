@@ -188,10 +188,13 @@ class VMwareMigrateVmk(object):
 
         for vnic in self.host_system.configManager.networkSystem.networkInfo.vnic:
             if vnic.device == self.device:
-                # self.vnic = vnic
                 if vnic.spec.distributedVirtualPort is None:
+                    std_vswitches = [vswitch.name for vswitch in self.host_system.configManager.networkSystem.networkInfo.vswitch]
+                    if self.current_switch_name not in std_vswitches:
+                        return "migrated"
                     if vnic.portgroup == self.current_portgroup_name:
                         return "migrate_vss_vds"
+
                 else:
                     dvs = find_dvs_by_name(self.content, self.current_switch_name)
                     if dvs is None:
